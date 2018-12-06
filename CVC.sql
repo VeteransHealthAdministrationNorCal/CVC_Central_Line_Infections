@@ -1,8 +1,6 @@
-CREATE PROCEDURE Central_Line_Infections
-AS
 
-DROP TABLE IF EXISTS D05_VISN21Sites.LSV.MAC_CVC
-
+INSERT INTO
+	LSV.MAC_CVC
 SELECT DISTINCT
 	SPatient.PatientSID
 	,SPatient.PatientSSN
@@ -53,8 +51,6 @@ SELECT DISTINCT
 		THEN HFT.HealthFactorType ELSE NULL END AS LineLoc
 	,CASE WHEN HFT.HealthFactorType LIKE '%REMOVE%'
 		THEN HFT.HealthFactorType ELSE NULL END AS LineRemoved
-INTO
-	D05_VISN21Sites.LSV.MAC_CVC
 FROM
 	LSV.SPatient.SPatientAddress AS SAddress
 	INNER JOIN LSV.BISL_R1VX.AR3Y_SPatient_SPatient AS SPatient
@@ -118,50 +114,3 @@ WHERE
 		OR Inpatient.AdmitDateTime IS NULL
 	)
 	AND Microbiology.SpecimenTakenDateTime >= HF.HealthFactorDateTime
-GROUP BY
-	SPatient.PatientSID
-	,SPatient.PatientSSN
-	,SPatient.Sta3n
-	,SPatient.PatientName
-	,SPatient.Age
-	,SPatient.Gender
-	,MicroBiology.SpecimenTakenDateTime
-	,MicroBiology.RequestingWard
-	,MicroBiology.SpecimenComment
-	,DimCollectionSample.CollectionSample
-	,AntiSens.OrganismQuantity
-	,AntiSens.AntibioticSensitivityValue
-	,AntiSensComm.AntibioticSensitivityComments
-	,DimAntibiotic.Antibiotic
-	,DimAntibiotic.DrugNodeIEN
-	,DimAntibiotic.AntibioticDisplayComment
-	,DimAntibiotic.LabProcedure
-	,DimOrganism.Organism
-	,DimOrganism.OrganismCategory
-	,DimOrganism.GramStain
-	,SAddress.City
-	,SAddress.County
-	,SAddress.State
-	,SAddress.Zip
-	,SAddress.Zip4
-	,SAddress.GISPatientAddressLongitude
-	,SAddress.GISPatientAddressLatitude
-	,SAddress.GISFIPSCode
-	,SAddress.GISMarket
-	,SAddress.GISSubmarket
-	,Inpatient.AdmitDateTime
-	,HF.HealthFactorDateTime
-	,Inpatient.DischargeDateTime
-	,Ward.WardLocationName
-	,Bed.RoomBed
-	,HFT.HealthFactorType
-ORDER BY
-	SPatient.PatientName
-	,Inpatient.AdmitDateTime
-	,HF.HealthFactorDateTime
-	,Inpatient.DischargeDateTime
-	,MicroBiology.SpecimenTakenDateTime
-
-CREATE CLUSTERED COLUMNSTORE INDEX ccsi_CVC
-	ON D05_VISN21Sites.LSV.MAC_CVC
-GO
