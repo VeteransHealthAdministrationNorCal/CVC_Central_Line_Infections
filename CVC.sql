@@ -1,6 +1,3 @@
-
-INSERT INTO
-	LSV.MAC_CVC
 SELECT DISTINCT
 	SPatient.PatientSID
 	,SPatient.PatientSSN
@@ -108,7 +105,6 @@ WHERE
 		HF.HealthFactorDateTime >= Inpatient.AdmitDateTime
 		OR Inpatient.AdmitDateTime IS NULL
 	)
-	AND Microbiology.SpecimenTakenDateTime >= HF.HealthFactorDateTime
 	AND (
 		Inpatient.AdmitDateTime >= DATEADD(MONTH, -2, GETDATE())
 		OR Inpatient.AdmitDateTime IS NULL
